@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="vertical"
+              android:id="@+id/recipe_detail"
+              xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              tools:context=".RecipeStepDetailFragment"
+              xmlns:tools="http://schemas.android.com/tools">
+<TextView android:id="@+id/recipe_detail_text"
+          style="?android:attr/textAppearanceLarge"
+          xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:padding="16dp"
+          android:textIsSelectable="true"
+          />
+<com.google.android.exoplayer2.ui.SimpleExoPlayerView
+android:id="@+id/recipe_detail_video_view"
+android:layout_width="match_parent"
+android:layout_height="300dp"
+    />
+</LinearLayout>
