@@ -1,8 +1,10 @@
 package com.chuck.android.bakingapp;
 
 import android.app.Activity;
+import android.content.Context;
 import android.net.Uri;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -56,6 +58,8 @@ public class RecipeStepDetailFragment extends Fragment {
     private SimpleExoPlayerView mPlayerView;
     private static MediaSessionCompat mMediaSession;
     private PlaybackStateCompat.Builder mStateBuilder;
+    private Context context;
+
 
 
 
@@ -72,6 +76,13 @@ public class RecipeStepDetailFragment extends Fragment {
      * fragment (e.g. upon screen orientation changes).
      */
     public RecipeStepDetailFragment() {
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.context = context;
+
     }
 
     @Override
@@ -108,14 +119,14 @@ public class RecipeStepDetailFragment extends Fragment {
                     new DefaultTrackSelector(videoTrackSelectionFactory);
 
             SimpleExoPlayer player =
-                    ExoPlayerFactory.newSimpleInstance(container.getContext(), trackSelector);
+                    ExoPlayerFactory.newSimpleInstance(context, trackSelector);
 
             // Bind the player to the view.
             mPlayerView.setPlayer(player);
 
             // Produces DataSource instances through which media data is loaded.
-            DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(container.getContext(),
-                    Util.getUserAgent(container.getContext(), "yourApplicationName"), bandwidthMeter);
+            DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(context,
+                    Util.getUserAgent(context, "yourApplicationName"), bandwidthMeter);
             // This is the MediaSource representing the media to be played.
             MediaSource videoSource = new ExtractorMediaSource.Factory(dataSourceFactory)
                     .createMediaSource(Uri.parse(videoURL));
@@ -140,5 +151,16 @@ public class RecipeStepDetailFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         releaseVideo();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        releaseVideo();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
     }
 }

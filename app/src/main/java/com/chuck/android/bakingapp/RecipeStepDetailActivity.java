@@ -18,9 +18,9 @@ import com.google.android.exoplayer2.util.Util;
  * item details are presented side-by-side with a list of items
  * in a {@link RecipeListStepActivity}.
  */
-public class RecipeStepDetailActivity extends AppCompatActivity {
+public class  RecipeStepDetailActivity extends AppCompatActivity {
     public RecipeStepDetailFragment fragment;
-
+    public static final String MY_FRAGMENT_TAG = "myDetailFragment";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,9 +67,12 @@ public class RecipeStepDetailActivity extends AppCompatActivity {
             fragment = new RecipeStepDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.recipe_detail_container, fragment)
+                    .replace(R.id.recipe_detail_container, fragment,MY_FRAGMENT_TAG)
                     .commit();
         }
+        else
+            fragment = (RecipeStepDetailFragment) getSupportFragmentManager().findFragmentByTag(MY_FRAGMENT_TAG);
+
     }
 
     @Override
