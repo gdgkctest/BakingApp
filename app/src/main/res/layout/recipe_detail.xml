@@ -6,6 +6,16 @@
               android:layout_height="wrap_content"
               tools:context=".RecipeStepDetailFragment"
               xmlns:tools="http://schemas.android.com/tools">
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/ingredientList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="top"/>
+    <com.google.android.exoplayer2.ui.SimpleExoPlayerView
+        android:id="@+id/recipe_detail_video_view"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"/>
 <TextView android:id="@+id/recipe_detail_text"
           style="?android:attr/textAppearanceLarge"
           xmlns:android="http://schemas.android.com/apk/res/android"
@@ -15,9 +25,6 @@
           android:padding="16dp"
           android:textIsSelectable="true"
           />
-<com.google.android.exoplayer2.ui.SimpleExoPlayerView
-android:id="@+id/recipe_detail_video_view"
-android:layout_width="match_parent"
-android:layout_height="300dp"
-    />
+
+
 </LinearLayout>

@@ -1,5 +1,8 @@
 package com.chuck.android.bakingapp.adapters;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,7 +13,11 @@ import android.widget.TextView;
 
 import com.chuck.android.bakingapp.R;
 import com.chuck.android.bakingapp.models.Ingredient;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -18,6 +25,7 @@ import butterknife.ButterKnife;
 
 public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.IngredientViewHolder> {
     private List<Ingredient> ingredients;
+
 
     public class IngredientViewHolder  extends RecyclerView.ViewHolder{
         @BindView(R.id.ingredientRVLinearLayout)LinearLayout ingredientLayout;
@@ -28,7 +36,7 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
 
         public IngredientViewHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(itemView);
+            ButterKnife.bind(this,itemView);
 
         }
     }
@@ -50,13 +58,25 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
             holder.ingredientName.setText(ingredientName);
             holder.ingredientMeasure.setText(ingredientMeasure);
             holder.ingredientQuantity.setText(Float.toString(ingredientQuantity));
-
         }
 
     }
-    public void setIngredients(List<Ingredient> currentIngredients){
-        ingredients = currentIngredients;
+    public void setIngredients(Context context){
+        ingredients = getIngredients(context);
         notifyDataSetChanged();
+    }
+    private List<Ingredient> getIngredients(Context context){
+        //ingredients = null;
+        SharedPreferences sharedPreferences;
+        if ((sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)) != null)
+        {
+            String listJson = sharedPreferences.getString("json1", "No Data");
+            Gson gson = new Gson();
+            Type type = new TypeToken<ArrayList<Ingredient>>() {
+            }.getType();
+            ingredients = gson.fromJson(listJson, type);
+        }
+        return ingredients;
     }
 
     @Override

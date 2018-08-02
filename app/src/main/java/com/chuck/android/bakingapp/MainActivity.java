@@ -28,8 +28,6 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     private RecyclerView recyclerView;
     private RecipeAdapter adapter;
-   // LinearLayoutManager recipeLayoutManager;
-    private List<RecipeList> currentMoviesList = new ArrayList<>();
 
 
     @Override
@@ -40,14 +38,6 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
         recyclerView = findViewById(R.id.recipeList);
         initRecyclerView();
         getRecipeListfromWeb();
@@ -55,11 +45,9 @@ public class MainActivity extends AppCompatActivity {
 
     }
     private void initRecyclerView() {
-        //recipeLayoutManager = new LinearLayoutManager(this);
         adapter = new RecipeAdapter();
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
     }
     public void getRecipeListfromWeb(){
         RecipeInterface recipeService = RecipeAPI.getClient().create(RecipeInterface.class);

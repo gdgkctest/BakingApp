@@ -5,13 +5,17 @@
               android:layout_height="wrap_content"
               android:gravity="center_vertical"
               android:minHeight="72dp"
-              android:orientation="vertical"
+              android:orientation="horizontal"
               android:padding="16dp"
               android:baselineAligned="false">
-
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/ic_cooking"/>
     <TextView
         android:id="@+id/recipe_name"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        style="@style/RecipeListText"/>
 
 </LinearLayout>

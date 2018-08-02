@@ -17,4 +17,17 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
 
+    <style name="IngredientsLinkText" parent="@android:style/Widget.TextView">
+        <item name="android:textColor">@android:color/holo_red_light</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+    <style name="RecipeListText" parent="@android:style/Widget.TextView">
+        <item name="android:textColor">@android:color/holo_blue_dark</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+    <style name="RecipeStepsText" parent="@android:style/Widget.TextView">
+        <item name="android:textColor">@android:color/holo_blue_dark</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
 </resources>
