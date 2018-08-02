@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RemoteViews;
 import android.widget.TextView;
@@ -20,6 +21,7 @@ import com.chuck.android.bakingapp.RecipeListStepActivity;
 import com.chuck.android.bakingapp.models.RecipeList;
 import com.chuck.android.bakingapp.widgets.RecipeIngredientsWidget;
 import com.google.gson.Gson;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -33,12 +35,14 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
     public class RecipeViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         LinearLayout recipesLayout;
         TextView recipeName;
+        ImageView recipeImage;
 
         RecipeViewHolder(View v) {
             super(v);
             //Define ViewHolder Textview and layout
             recipesLayout = v.findViewById(R.id.recipes_layout);
             recipeName = v.findViewById(R.id.recipe_name);
+            recipeImage = v.findViewById(R.id.recipe_image);
             v.setOnClickListener(this);
         }
 
@@ -82,6 +86,10 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
         if (recipes != null) {
             String recipeName = recipes.get(position).getName();
             holder.recipeName.setText(recipeName);
+            String recipeImage = recipes.get(position).getImage();
+            if (recipeImage != null && !recipeImage.isEmpty())
+                Picasso.get().load(recipeImage).into(holder.recipeImage);
+            holder.recipeImage.setContentDescription(recipeName);
         }
 
     }

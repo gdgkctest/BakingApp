@@ -9,6 +9,7 @@
               android:padding="16dp"
               android:baselineAligned="false">
     <ImageView
+        android:id="@+id/recipe_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@mipmap/ic_cooking"/>

@@ -5,8 +5,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.View;
 
@@ -47,11 +45,12 @@ public class RecipeListStepActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_list);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle(getTitle());
+        recyclerView = findViewById(R.id.recipe_list);
 
-        getRecipeListfromWeb();
+        getRecipeListFromWeb();
         if (findViewById(R.id.recipe_detail_container) != null) {
             // The detail container view will be present only in the
             // large-screen layouts (res/values-w900dp).
@@ -60,8 +59,7 @@ public class RecipeListStepActivity extends AppCompatActivity {
             mTwoPane = true;
         }
 
-        recyclerView = findViewById(R.id.recipe_list);
-        assert recyclerView != null;
+       // assert recyclerView != null;
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
@@ -76,19 +74,17 @@ public class RecipeListStepActivity extends AppCompatActivity {
             recyclerView.setAdapter(new RecipeStepsAdapter(this, currentSteps, mTwoPane));
     }
 
-    public void getRecipeListfromWeb(){
+    public void getRecipeListFromWeb(){
         RecipeInterface recipeService = RecipeAPI.getClient().create(RecipeInterface.class);
         Call<List<RecipeList>> call = recipeService.getCurrentRecipes();
         call.enqueue(new Callback<List<RecipeList>>() {
             @Override
-            public void onResponse(Call<List<RecipeList>> call, Response<List<RecipeList>> response) {
+            public void onResponse(@NonNull Call<List<RecipeList>> call, @NonNull Response<List<RecipeList>> response) {
                 recipes = response.body();
                 setupRecyclerView((RecyclerView) recyclerView);
-
             }
-
             @Override
-            public void onFailure(Call<List<RecipeList>> call, Throwable t) {
+            public void onFailure(@NonNull Call<List<RecipeList>> call, @NonNull Throwable t) {
                 Log.e(APP_NAME, t.toString());
             }
         });

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -16,14 +17,19 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.MimeTypeMap;
 import android.widget.TextView;
+import android.widget.Toolbar;
 
 import com.chuck.android.bakingapp.adapters.IngredientsAdapter;
 import com.chuck.android.bakingapp.models.Ingredient;
+import com.chuck.android.bakingapp.utils.MyUtils;
+
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
@@ -42,6 +48,7 @@ import java.util.List;
 
 import static android.content.res.Configuration.ORIENTATION_PORTRAIT;
 import static android.support.constraint.Constraints.TAG;
+import static com.chuck.android.bakingapp.utils.MyUtils.getMimeType;
 
 /**
  * A fragment representing a single Recipe detail screen.
@@ -62,6 +69,7 @@ public class RecipeStepDetailFragment extends Fragment {
     public static final String ARG_ITEM_VIDEO_URL = "item_video_url";
     public static final String ARG_ITEM_THUMBNAIL_URL = "item_thumbnail_url";
     public static final String BUNDLE_VIDEOPOSITION = "video saved position";
+    public static final String BUNDLE_VIDEOPLAYING = "is video playing";
 
     private SimpleExoPlayer mExoPlayer;
     private SimpleExoPlayerView mPlayerView;
@@ -71,12 +79,8 @@ public class RecipeStepDetailFragment extends Fragment {
     private RecyclerView recyclerView;
     private IngredientsAdapter adapter;
     private List<Ingredient> mIngredients;
-    private Long videoPosition;
-
-
-
-
-
+    private long videoPosition;
+    private boolean videoPlaying;
 
     /**
      * The dummy content this fragment is presenting.
@@ -85,21 +89,31 @@ public class RecipeStepDetailFragment extends Fragment {
     private String description;
     private String longDescription;
     private String videoURL;
+    private boolean isIngredients;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public RecipeStepDetailFragment() {
-    }
+//    public RecipeStepDetailFragment() {
+//    }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = context;
-
     }
-
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        if (savedInstanceState != null )
+        {
+            Long playerPosition = savedInstanceState.getLong(BUNDLE_VIDEOPOSITION);
+            Boolean playerPlaying = savedInstanceState.getBoolean(BUNDLE_VIDEOPLAYING);
+            mExoPlayer.seekTo(playerPosition);
+            mExoPlayer.setPlayWhenReady(playerPlaying);
+        }
+        super.onViewStateRestored(savedInstanceState);
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,64 +121,46 @@ public class RecipeStepDetailFragment extends Fragment {
         assert getArguments() != null;
         if (getArguments().containsKey(ARG_ITEM_ID)) {
             id = getArguments().getInt(ARG_ITEM_ID);
+            //Check if Step is Ingredients
+            if (id == -1)
+                isIngredients = true;
             description = getArguments().getString(ARG_ITEM_DESCRIPTION);
             longDescription = getArguments().getString(ARG_ITEM_LONG_DESCRIPTION);
             videoURL = getArguments().getString(ARG_ITEM_VIDEO_URL);
-
-            Activity activity = this.getActivity();
-            assert activity != null;
-//            if (getResources().getConfiguration().orientation == ORIENTATION_PORTRAIT) {
-//                CollapsingToolbarLayout appBarLayout = activity.findViewById(R.id.toolbar_layout);
-//                if (appBarLayout != null) {
-//                    if (id == -1)
-//                        appBarLayout.setTitle(description);
-//                    else
-//                        appBarLayout.setTitle(Integer.toString(id)+ " " + description);
-//
-//                }
-//            }
-
-
         }
+        Activity activity = this.getActivity();
+        assert activity != null;
+            if (getResources().getConfiguration().orientation == ORIENTATION_PORTRAIT) {
+                activity.setTitle("Recipe Step Details");
+                    if (isIngredients)
+                        activity.setTitle(description);
+                    else
+                        activity.setTitle(Integer.toString(id)+ " " + description);
 
+            }
     }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.recipe_detail, container, false);
         mPlayerView = rootView.findViewById(R.id.recipe_detail_video_view);
+        if (longDescription != null && getResources().getConfiguration().orientation == ORIENTATION_PORTRAIT)
+            ((TextView)rootView.findViewById(R.id.recipe_detail_text)).setText(longDescription);
 
-        if (id == -1) {
+        if (isIngredients) {
             recyclerView = rootView.findViewById(R.id.ingredientList);
             initRecyclerView();
             adapter.setIngredients(context);
             mPlayerView.setVisibility(View.GONE);
             return rootView;
         }
-
-        if (getResources().getConfiguration().orientation == ORIENTATION_PORTRAIT) {
-            if (longDescription != null) {
-                ((TextView)rootView.findViewById(R.id.recipe_detail_text)).setText(longDescription);
-                CollapsingToolbarLayout appBarLayout = rootView.findViewById(R.id.toolbar_layout);
-                if (appBarLayout != null) {
-                    if (id == -1)
-                        appBarLayout.setTitle(description);
-                    else
-                        appBarLayout.setTitle(Integer.toString(id)+ " " + description);
-
-                }
-            }
+        String mimeType = getMimeType(videoURL);
+        if (mimeType == null) {
+            mPlayerView.setVisibility(View.GONE);
+            return rootView;
         }
-//        if (savedInstanceState != null )
-//        {
-//            Long playerPosition = savedInstanceState.getLong(BUNDLE_VIDEOPOSITION);
-//            mExoPlayer.seekTo(playerPosition);
-//        }
-
-
-        if (videoURL != null) {
+        if (mimeType.equals("video/mp4") ) {
             // 1. Create a default TrackSelector
             Handler mainHandler = new Handler();
             DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
@@ -172,12 +168,9 @@ public class RecipeStepDetailFragment extends Fragment {
                     new AdaptiveTrackSelection.Factory(bandwidthMeter);
             DefaultTrackSelector trackSelector =
                     new DefaultTrackSelector(videoTrackSelectionFactory);
-
-            SimpleExoPlayer player =
-                    ExoPlayerFactory.newSimpleInstance(context, trackSelector);
-
+            mExoPlayer = ExoPlayerFactory.newSimpleInstance(context, trackSelector);
             // Bind the player to the view.
-            mPlayerView.setPlayer(player);
+            mPlayerView.setPlayer(mExoPlayer);
             // Produces DataSource instances through which media data is loaded.
             DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(context,
                     Util.getUserAgent(context, "yourApplicationName"), bandwidthMeter);
@@ -185,24 +178,24 @@ public class RecipeStepDetailFragment extends Fragment {
             MediaSource videoSource = new ExtractorMediaSource.Factory(dataSourceFactory)
                     .createMediaSource(Uri.parse(videoURL));
             // Prepare the player with the source.
-            player.prepare(videoSource);
+            mExoPlayer.prepare(videoSource);
         }
+        else
+            mPlayerView.setVisibility(View.GONE);
+
 
         return rootView;
     }
     @Override
     public void onStop() {
         super.onStop();
-        if (Util.SDK_INT > 23) {
-            releaseVideo();
-        }
+        if (Util.SDK_INT > 23) { releaseVideo(); }
     }
     @Override
     public void onDestroy() {
         super.onDestroy();
         releaseVideo();
     }
-
     @Override
     public void onPause() {
         super.onPause();
@@ -210,13 +203,11 @@ public class RecipeStepDetailFragment extends Fragment {
             releaseVideo();
         }
     }
-
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        //TODO save video position
-        if (mExoPlayer !=null)
-            videoPosition = mExoPlayer.getCurrentPosition();
+        //Save player position and if playing
         outState.putLong(BUNDLE_VIDEOPOSITION, videoPosition);
+        outState.putBoolean(BUNDLE_VIDEOPLAYING, videoPlaying);
         super.onSaveInstanceState(outState);
     }
     private void initRecyclerView() {
@@ -225,13 +216,18 @@ public class RecipeStepDetailFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
     }
     public void releaseVideo(){
+        //Releases video resources to save system resources
         if (mExoPlayer != null)
         {
+            //Set player position and if playing
+            videoPlaying = mExoPlayer.getPlayWhenReady();
             videoPosition = mExoPlayer.getCurrentPosition();
             mExoPlayer.stop();
             mExoPlayer.release();
-            Log.i(TAG, "onDestroyView: Video Player Released");
+            mExoPlayer = null;
         }
     }
 
-}
+
+
+    }

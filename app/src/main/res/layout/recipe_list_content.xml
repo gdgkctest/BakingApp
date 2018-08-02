@@ -1,20 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="wrap_content"
+              android:id="@+id/recipe_step_items"
+              android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:orientation="horizontal">
+    <!--<ImageView-->
+        <!--android:id="@+id/recipe_step_image"-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:src="@mipmap/ic_cooking"-->
+        <!--android:layout_weight=".1"/>-->
 
     <TextView
         android:id="@+id/id_text"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/text_margin"
-        style="@style/RecipeStepsText"/>
+        style="@style/RecipeStepsText"
+        android:layout_weight=".1"/>
 
     <TextView
         android:id="@+id/content"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/text_margin"
-        style="@style/RecipeStepsText"/>
+        style="@style/RecipeStepsText"
+        android:layout_weight=".8"/>
 </LinearLayout>
