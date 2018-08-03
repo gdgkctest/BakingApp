@@ -57,12 +57,6 @@ import static com.chuck.android.bakingapp.utils.MyUtils.getMimeType;
  * on handsets.
  */
 public class RecipeStepDetailFragment extends Fragment {
-    /**
-     * The fragment argument representing the item ID that this fragment
-     * represents.
-     */
-    private static final String APP_NAME = RecipeStepDetailFragment.class.getSimpleName();
-
     public static final String ARG_ITEM_ID = "item_id";
     public static final String ARG_ITEM_DESCRIPTION = "item_description";
     public static final String ARG_ITEM_LONG_DESCRIPTION = "item_long_description";
@@ -70,10 +64,14 @@ public class RecipeStepDetailFragment extends Fragment {
     public static final String ARG_ITEM_THUMBNAIL_URL = "item_thumbnail_url";
     public static final String BUNDLE_VIDEOPOSITION = "video saved position";
     public static final String BUNDLE_VIDEOPLAYING = "is video playing";
-
+    /**
+     * The fragment argument representing the item ID that this fragment
+     * represents.
+     */
+    private static final String APP_NAME = RecipeStepDetailFragment.class.getSimpleName();
+    private static MediaSessionCompat mMediaSession;
     private SimpleExoPlayer mExoPlayer;
     private SimpleExoPlayerView mPlayerView;
-    private static MediaSessionCompat mMediaSession;
     private PlaybackStateCompat.Builder mStateBuilder;
     private Context context;
     private RecyclerView recyclerView;
@@ -199,6 +197,10 @@ public class RecipeStepDetailFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
+        if (mExoPlayer != null) {
+            videoPlaying = mExoPlayer.getPlayWhenReady();
+            videoPosition = mExoPlayer.getCurrentPosition();
+        }
         if (Util.SDK_INT <= 23) {
             releaseVideo();
         }
@@ -220,14 +222,10 @@ public class RecipeStepDetailFragment extends Fragment {
         if (mExoPlayer != null)
         {
             //Set player position and if playing
-            videoPlaying = mExoPlayer.getPlayWhenReady();
-            videoPosition = mExoPlayer.getCurrentPosition();
             mExoPlayer.stop();
             mExoPlayer.release();
             mExoPlayer = null;
         }
     }
 
-
-
-    }
+}
