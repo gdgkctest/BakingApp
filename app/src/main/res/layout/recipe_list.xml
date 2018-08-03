@@ -1,12 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView layout_height="match_parent"
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="match_parent"/>
-<TextView
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:text="test"
-    xmlns:android="http://schemas.android.com/apk/res/android"/>
+
 <android.support.v7.widget.RecyclerView android:id="@+id/recipe_list"
                                         android:name="com.chuck.android.bakingapp.RecipeListFragment"
                                         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -17,4 +10,3 @@
                                         android:layout_marginRight="16dp"
                                         tools:context=".RecipeListStepActivity"
                                         tools:listitem="@layout/recipe_list_content"/>
-</Scrollview>

@@ -20,6 +20,8 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import static com.chuck.android.bakingapp.utils.MyUtils.getMimeType;
+
 public class RecipeStepsAdapter extends RecyclerView.Adapter<RecipeStepsAdapter.ViewHolder> {
 
         private final RecipeListStepActivity mParentActivity;
@@ -56,10 +58,11 @@ public class RecipeStepsAdapter extends RecyclerView.Adapter<RecipeStepsAdapter.
             }
             else {
                 holder.mIdView.setText(Integer.toString(mValues.get(position).getId()));
-//                String recipeStepImage = mValues.get(position).getThumbnailURL();
-//                if (recipeStepImage != null && !recipeStepImage.isEmpty())
-//                    Picasso.get().load(recipeStepImage).into(holder.mThumbnailView);
-//                holder.mThumbnailView.setContentDescription(stepDescription);
+                String recipeStepImage = mValues.get(position).getThumbnailURL();
+                String mimeType = getMimeType(recipeStepImage);
+                if (recipeStepImage != null && !recipeStepImage.isEmpty() && mimeType.startsWith("image"))
+                    Picasso.get().load(recipeStepImage).into(holder.mThumbnailView);
+                holder.mThumbnailView.setContentDescription(stepDescription);
             }
         }
 
@@ -71,13 +74,13 @@ public class RecipeStepsAdapter extends RecyclerView.Adapter<RecipeStepsAdapter.
         public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
             final TextView mIdView;
             final TextView mContentView;
-//            final ImageView mThumbnailView;
+            final ImageView mThumbnailView;
 
             ViewHolder(View view) {
                 super(view);
                 mIdView =  view.findViewById(R.id.id_text);
                 mContentView = view.findViewById(R.id.content);
-//                mThumbnailView = view.findViewById(R.id.recipe_step_image);
+                mThumbnailView = view.findViewById(R.id.recipe_step_image);
                 view.setOnClickListener(this);
             }
 

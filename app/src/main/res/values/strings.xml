@@ -4,4 +4,6 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="appwidget_text">Shopping List</string>
     <string name="add_widget">Add widget</string>
+    <string name="recipe_steps">Recipe Steps</string>
+    <string name="main_title">Baking App</string>
 </resources>

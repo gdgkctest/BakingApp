@@ -3,6 +3,8 @@ package com.chuck.android.bakingapp;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -47,10 +49,9 @@ public class RecipeListStepActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        toolbar.setTitle(getTitle());
+        toolbar.setTitle(R.string.recipe_steps);
         recyclerView = findViewById(R.id.recipe_list);
 
-        getRecipeListFromWeb();
         if (findViewById(R.id.recipe_detail_container) != null) {
             // The detail container view will be present only in the
             // large-screen layouts (res/values-w900dp).
@@ -59,10 +60,19 @@ public class RecipeListStepActivity extends AppCompatActivity {
             mTwoPane = true;
         }
 
-       // assert recyclerView != null;
+        getRecipeListFromWeb();
+
+
+        // assert recyclerView != null;
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        DividerItemDecoration itemDecoration = new
+                DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
+        recyclerView.addItemDecoration(itemDecoration);
+
         List<Step> currentSteps = null;
         if (recipes != null) {
             for (RecipeList recipe : recipes) {
@@ -72,6 +82,7 @@ public class RecipeListStepActivity extends AppCompatActivity {
         }
         if (currentSteps != null)
             recyclerView.setAdapter(new RecipeStepsAdapter(this, currentSteps, mTwoPane));
+
     }
 
     public void getRecipeListFromWeb(){
