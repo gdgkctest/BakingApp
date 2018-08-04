@@ -7,7 +7,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,8 +24,6 @@ import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
-
-import static android.support.constraint.Constraints.TAG;
 
 public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeViewHolder> {
     private List<RecipeList> recipes;
@@ -53,18 +51,18 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
             editor = sharedPreferences.edit();
             Gson gsonIngList = new Gson();
             String json = gsonIngList.toJson(recipes.get(position).getIngredients());
-            editor.putString("json1",json);
-            editor.putString("Recipe Title",recipes.get(position).getName());
+            editor.putString("json1", json);
+            editor.putString("Recipe Title", recipes.get(position).getName());
             editor.apply();
 
             RemoteViews remoteViews = new RemoteViews(view.getContext().getPackageName(), R.layout.recipe_ingredients_widget);
-            remoteViews.setTextViewText(R.id.widget_title,recipes.get(position).getName() + " Shopping List");
+            remoteViews.setTextViewText(R.id.widget_title, recipes.get(position).getName() + " Shopping List");
 
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(view.getContext());
             ComponentName thisWidget = new ComponentName(view.getContext(), RecipeIngredientsWidget.class);
             int[] appWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
             appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widgetListView);
-            appWidgetManager.updateAppWidget(thisWidget,remoteViews);
+            appWidgetManager.updateAppWidget(thisWidget, remoteViews);
             Intent myIntent = new Intent(view.getContext(), RecipeListStepActivity.class);
             myIntent.putExtra("EXTRA_RECIPE_ID", recipes.get(position).getId());
             view.getContext().startActivity(myIntent);
@@ -72,12 +70,11 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
     }
 
 
-
     @NonNull
     @Override
     public RecipeViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View view = inflater.inflate(R.layout.recipe_list_item,parent,false);
+        View view = inflater.inflate(R.layout.recipe_list_item, parent, false);
         return new RecipeViewHolder(view);
     }
 
@@ -87,12 +84,13 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
             String recipeName = recipes.get(position).getName();
             holder.recipeName.setText(recipeName);
             String recipeImage = recipes.get(position).getImage();
-            if (recipeImage != null && !recipeImage.isEmpty())
+            if (!TextUtils.isEmpty(recipeImage))
                 Picasso.get().load(recipeImage).into(holder.recipeImage);
             holder.recipeImage.setContentDescription(recipeName);
         }
 
     }
+
     public void setRecipes(List<RecipeList> currentRecipes) {
         //After Adapter is initialized add recipe object to adapter, when switching recipe lists
         this.recipes = currentRecipes;

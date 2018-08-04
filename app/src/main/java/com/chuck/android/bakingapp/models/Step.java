@@ -21,8 +21,7 @@ public class Step {
     @Expose
     private String thumbnailURL;
 
-    public Step (Integer id, String shortDescription)
-    {
+    public Step(Integer id, String shortDescription) {
         this.id = id;
         this.shortDescription = shortDescription;
         this.description = "";

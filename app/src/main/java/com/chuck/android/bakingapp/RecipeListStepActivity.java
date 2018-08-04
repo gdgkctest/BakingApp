@@ -2,6 +2,7 @@ package com.chuck.android.bakingapp;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -49,8 +50,14 @@ public class RecipeListStepActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        toolbar.setTitle(R.string.recipe_steps);
+        setTitle(R.string.recipe_steps);
+        // Show the Up button in the action bar.
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
         recyclerView = findViewById(R.id.recipe_list);
+
 
         if (findViewById(R.id.recipe_detail_container) != null) {
             // The detail container view will be present only in the
@@ -85,7 +92,7 @@ public class RecipeListStepActivity extends AppCompatActivity {
 
     }
 
-    public void getRecipeListFromWeb(){
+    public void getRecipeListFromWeb() {
         RecipeInterface recipeService = RecipeAPI.getClient().create(RecipeInterface.class);
         Call<List<RecipeList>> call = recipeService.getCurrentRecipes();
         call.enqueue(new Callback<List<RecipeList>>() {
@@ -94,6 +101,7 @@ public class RecipeListStepActivity extends AppCompatActivity {
                 recipes = response.body();
                 setupRecyclerView((RecyclerView) recyclerView);
             }
+
             @Override
             public void onFailure(@NonNull Call<List<RecipeList>> call, @NonNull Throwable t) {
                 Log.e(APP_NAME, t.toString());

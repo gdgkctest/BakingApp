@@ -2,15 +2,10 @@ package com.chuck.android.bakingapp;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-
-import com.google.android.exoplayer2.util.Util;
 
 /**
  * An activity representing a single Recipe detail screen. This
@@ -18,9 +13,10 @@ import com.google.android.exoplayer2.util.Util;
  * item details are presented side-by-side with a list of items
  * in a {@link RecipeListStepActivity}.
  */
-public class  RecipeStepDetailActivity extends AppCompatActivity {
+public class RecipeStepDetailActivity extends AppCompatActivity {
     public RecipeStepDetailFragment fragment;
     public static final String MY_FRAGMENT_TAG = "myDetailFragment";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,7 +45,7 @@ public class  RecipeStepDetailActivity extends AppCompatActivity {
             // using a fragment transaction.
             Bundle arguments = new Bundle();
             arguments.putInt(RecipeStepDetailFragment.ARG_ITEM_ID,
-                    getIntent().getIntExtra(RecipeStepDetailFragment.ARG_ITEM_ID,0));
+                    getIntent().getIntExtra(RecipeStepDetailFragment.ARG_ITEM_ID, 0));
             arguments.putString(RecipeStepDetailFragment.ARG_ITEM_DESCRIPTION,
                     getIntent().getStringExtra(RecipeStepDetailFragment.ARG_ITEM_DESCRIPTION));
             arguments.putString(RecipeStepDetailFragment.ARG_ITEM_LONG_DESCRIPTION,
@@ -59,10 +55,9 @@ public class  RecipeStepDetailActivity extends AppCompatActivity {
             fragment = new RecipeStepDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.recipe_detail_container, fragment,MY_FRAGMENT_TAG)
+                    .replace(R.id.recipe_detail_container, fragment, MY_FRAGMENT_TAG)
                     .commit();
-        }
-        else
+        } else
             fragment = (RecipeStepDetailFragment) getSupportFragmentManager().findFragmentByTag(MY_FRAGMENT_TAG);
 
     }

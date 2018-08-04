@@ -27,16 +27,20 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
     private List<Ingredient> ingredients;
 
 
-    public class IngredientViewHolder  extends RecyclerView.ViewHolder{
-        @BindView(R.id.ingredientRVLinearLayout)LinearLayout ingredientLayout;
-        @BindView(R.id.ingredientName) TextView ingredientName;
-        @BindView(R.id.ingredientMeasure) TextView ingredientMeasure;
-        @BindView(R.id.ingredientQuantity) TextView ingredientQuantity;
+    public class IngredientViewHolder extends RecyclerView.ViewHolder {
+        @BindView(R.id.ingredientRVLinearLayout)
+        LinearLayout ingredientLayout;
+        @BindView(R.id.ingredientName)
+        TextView ingredientName;
+        @BindView(R.id.ingredientMeasure)
+        TextView ingredientMeasure;
+        @BindView(R.id.ingredientQuantity)
+        TextView ingredientQuantity;
 
 
         public IngredientViewHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this,itemView);
+            ButterKnife.bind(this, itemView);
 
         }
     }
@@ -45,8 +49,9 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
     @Override
     public IngredientViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View view = inflater.inflate(R.layout.ingredients_list_item,parent,false);
-        return new IngredientViewHolder(view);    }
+        View view = inflater.inflate(R.layout.ingredients_list_item, parent, false);
+        return new IngredientViewHolder(view);
+    }
 
     @Override
     public void onBindViewHolder(@NonNull IngredientViewHolder holder, int position) {
@@ -61,15 +66,16 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
         }
 
     }
-    public void setIngredients(Context context){
+
+    public void setIngredients(Context context) {
         ingredients = getIngredients(context);
         notifyDataSetChanged();
     }
-    private List<Ingredient> getIngredients(Context context){
+
+    private List<Ingredient> getIngredients(Context context) {
         //ingredients = null;
         SharedPreferences sharedPreferences;
-        if ((sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)) != null)
-        {
+        if ((sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)) != null) {
             String listJson = sharedPreferences.getString("json1", "No Data");
             Gson gson = new Gson();
             Type type = new TypeToken<ArrayList<Ingredient>>() {
@@ -84,5 +90,6 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
         if (ingredients != null)
             return ingredients.size();
         else
-            return 0;    }
+            return 0;
+    }
 }

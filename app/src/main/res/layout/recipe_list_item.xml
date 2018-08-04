@@ -1,22 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:id="@+id/recipes_layout"
+<LinearLayout android:id="@+id/recipes_layout"
+              xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
+              android:baselineAligned="false"
               android:gravity="center_vertical"
               android:minHeight="72dp"
               android:orientation="horizontal"
-              android:padding="16dp"
-              android:baselineAligned="false">
+              android:padding="16dp">
+
     <ImageView
         android:id="@+id/recipe_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@mipmap/ic_cooking"/>
+
     <TextView
         android:id="@+id/recipe_name"
+        style="@style/RecipeListText"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="@style/RecipeListText"/>
+        android:layout_height="wrap_content"/>
 
 </LinearLayout>

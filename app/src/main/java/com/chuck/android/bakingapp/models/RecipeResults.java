@@ -5,7 +5,7 @@ import java.util.List;
 public class RecipeResults {
     private List<RecipeList> results;
 
-    public RecipeResults(List<RecipeList> results){
+    public RecipeResults(List<RecipeList> results) {
         this.results = results;
     }
 

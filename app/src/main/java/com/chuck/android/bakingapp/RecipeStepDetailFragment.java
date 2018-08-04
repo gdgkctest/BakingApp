@@ -3,33 +3,23 @@ package com.chuck.android.bakingapp;
 import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.CollapsingToolbarLayout;
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.MimeTypeMap;
 import android.widget.TextView;
-import android.widget.Toolbar;
 
 import com.chuck.android.bakingapp.adapters.IngredientsAdapter;
 import com.chuck.android.bakingapp.models.Ingredient;
-import com.chuck.android.bakingapp.utils.MyUtils;
-
-import com.google.android.exoplayer2.DefaultLoadControl;
-import com.google.android.exoplayer2.DefaultRenderersFactory;
-import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
@@ -37,17 +27,15 @@ import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
-import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
-import java.net.URI;
 import java.util.List;
 
+import static android.content.res.Configuration.ORIENTATION_LANDSCAPE;
 import static android.content.res.Configuration.ORIENTATION_PORTRAIT;
-import static android.support.constraint.Constraints.TAG;
 import static com.chuck.android.bakingapp.utils.MyUtils.getMimeType;
 
 /**
@@ -95,16 +83,15 @@ public class RecipeStepDetailFragment extends Fragment {
      */
 //    public RecipeStepDetailFragment() {
 //    }
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = context;
     }
+
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-        if (savedInstanceState != null )
-        {
+        if (savedInstanceState != null && mExoPlayer != null) {
             Long playerPosition = savedInstanceState.getLong(BUNDLE_VIDEOPOSITION);
             Boolean playerPlaying = savedInstanceState.getBoolean(BUNDLE_VIDEOPLAYING);
             mExoPlayer.seekTo(playerPosition);
@@ -112,6 +99,7 @@ public class RecipeStepDetailFragment extends Fragment {
         }
         super.onViewStateRestored(savedInstanceState);
     }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -128,15 +116,16 @@ public class RecipeStepDetailFragment extends Fragment {
         }
         Activity activity = this.getActivity();
         assert activity != null;
-            if (getResources().getConfiguration().orientation == ORIENTATION_PORTRAIT) {
-                activity.setTitle("Recipe Step Details");
-                    if (isIngredients)
-                        activity.setTitle(description);
-                    else
-                        activity.setTitle(Integer.toString(id)+ " " + description);
+        if (getResources().getConfiguration().orientation == ORIENTATION_PORTRAIT) {
+            activity.setTitle("Recipe Step Details");
+            if (isIngredients)
+                activity.setTitle(description);
+            else
+                activity.setTitle(Integer.toString(id) + " " + description);
 
-            }
+        }
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -144,7 +133,7 @@ public class RecipeStepDetailFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.recipe_detail, container, false);
         mPlayerView = rootView.findViewById(R.id.recipe_detail_video_view);
         if (longDescription != null && getResources().getConfiguration().orientation == ORIENTATION_PORTRAIT)
-            ((TextView)rootView.findViewById(R.id.recipe_detail_text)).setText(longDescription);
+            ((TextView) rootView.findViewById(R.id.recipe_detail_text)).setText(longDescription);
 
         if (isIngredients) {
             recyclerView = rootView.findViewById(R.id.ingredientList);
@@ -156,9 +145,13 @@ public class RecipeStepDetailFragment extends Fragment {
         String mimeType = getMimeType(videoURL);
         if (mimeType == null) {
             mPlayerView.setVisibility(View.GONE);
+            ((TextView) rootView.findViewById(R.id.recipe_detail_text)).setText(longDescription);
             return rootView;
         }
-        if (mimeType.equals("video/mp4") ) {
+        if (mimeType.equals("video/mp4")) {
+            //Hide Description Text in landsacpe
+            if (getResources().getConfiguration().orientation == ORIENTATION_LANDSCAPE)
+                ((TextView) rootView.findViewById(R.id.recipe_detail_text)).setVisibility(View.GONE);
             // 1. Create a default TrackSelector
             Handler mainHandler = new Handler();
             DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
@@ -177,23 +170,27 @@ public class RecipeStepDetailFragment extends Fragment {
                     .createMediaSource(Uri.parse(videoURL));
             // Prepare the player with the source.
             mExoPlayer.prepare(videoSource);
-        }
-        else
+        } else
             mPlayerView.setVisibility(View.GONE);
 
 
         return rootView;
     }
+
     @Override
     public void onStop() {
         super.onStop();
-        if (Util.SDK_INT > 23) { releaseVideo(); }
+        if (Util.SDK_INT > 23) {
+            releaseVideo();
+        }
     }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
         releaseVideo();
     }
+
     @Override
     public void onPause() {
         super.onPause();
@@ -205,6 +202,7 @@ public class RecipeStepDetailFragment extends Fragment {
             releaseVideo();
         }
     }
+
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         //Save player position and if playing
@@ -212,15 +210,16 @@ public class RecipeStepDetailFragment extends Fragment {
         outState.putBoolean(BUNDLE_VIDEOPLAYING, videoPlaying);
         super.onSaveInstanceState(outState);
     }
+
     private void initRecyclerView() {
         adapter = new IngredientsAdapter();
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
     }
-    public void releaseVideo(){
+
+    public void releaseVideo() {
         //Releases video resources to save system resources
-        if (mExoPlayer != null)
-        {
+        if (mExoPlayer != null) {
             //Set player position and if playing
             mExoPlayer.stop();
             mExoPlayer.release();

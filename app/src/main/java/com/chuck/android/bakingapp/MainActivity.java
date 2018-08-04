@@ -1,34 +1,33 @@
 package com.chuck.android.bakingapp;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.annotation.Nullable;
+import android.support.test.espresso.idling.CountingIdlingResource;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+
+import com.chuck.android.bakingapp.REST.RecipeAPI;
+import com.chuck.android.bakingapp.REST.RecipeInterface;
+import com.chuck.android.bakingapp.adapters.RecipeAdapter;
+import com.chuck.android.bakingapp.models.RecipeList;
+
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
-import android.util.Log;
-import android.view.View;
-
-import com.chuck.android.bakingapp.adapters.RecipeAdapter;
-import com.chuck.android.bakingapp.REST.RecipeAPI;
-import com.chuck.android.bakingapp.REST.RecipeInterface;
-import com.chuck.android.bakingapp.models.RecipeList;
-import com.google.android.exoplayer2.util.Util;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private RecyclerView recyclerView;
     private RecipeAdapter adapter;
+    @Nullable
+    private CountingIdlingResource mIdlingResource = new CountingIdlingResource("RecipeNetworkCall");
 
 
     @Override
@@ -46,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
     private void initRecyclerView() {
         adapter = new RecipeAdapter();
         recyclerView.setAdapter(adapter);
@@ -54,7 +54,10 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.addItemDecoration(itemDecoration);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
-    public void getRecipeListfromWeb(){
+
+    public void getRecipeListfromWeb() {
+        //Espresso Idling Resource increment
+        mIdlingResource.increment();
         RecipeInterface recipeService = RecipeAPI.getClient().create(RecipeInterface.class);
         Call<List<RecipeList>> call = recipeService.getCurrentRecipes();
         call.enqueue(new Callback<List<RecipeList>>() {
@@ -62,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call<List<RecipeList>> call, Response<List<RecipeList>> response) {
                 List<RecipeList> recipes = response.body();
                 adapter.setRecipes(recipes);
+                mIdlingResource.decrement();
             }
 
             @Override
@@ -70,6 +74,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    public CountingIdlingResource getIdlingResourceInTest() {
+        return mIdlingResource;
     }
 
 

@@ -36,7 +36,7 @@ public class RecipeIngredientsWidget extends AppWidgetProvider {
             remoteViews.setRemoteAdapter(R.id.widgetListView, serviceIntent);
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
             String recipeTitle = sharedPreferences.getString("Recipe Title", "NO RECIPE");
-            remoteViews.setTextViewText(R.id.widget_title,recipeTitle + " Shopping List");
+            remoteViews.setTextViewText(R.id.widget_title, recipeTitle + " Shopping List");
             Intent intent = new Intent(context, RecipeIngredientsWidget.class);
             intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
 
